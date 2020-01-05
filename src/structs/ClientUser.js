@@ -10,7 +10,7 @@ class ClientUser extends User {
 
     async fetchPrivateBlocks() {
         const { blockedChatUsers, blockedByChatUsers } = await this.client.http.get('https://dev.fandom.com/index.php', {
-            query: {
+            params: {
                 action: 'ajax',
                 rs: 'ChatAjax',
                 method: 'getPrivateBlocks',
@@ -22,14 +22,13 @@ class ClientUser extends User {
     }
 
     blockAllowPrivate(name, dir) {
-        return this.client.http.post(`https://doru.fandom.com/index.php`, {
-            form: true,
-            query: {
+        return this.client.http.form(`https://doru.fandom.com/index.php`, {
+            params: {
                 action: 'ajax',
                 rs: 'ChatAjax',
                 method: 'blockOrBanChat'
             },
-            body: {
+            data: {
                 userToBan: name,
                 token: this.client.session.token,
                 dir

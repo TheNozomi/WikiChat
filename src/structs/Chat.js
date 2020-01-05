@@ -5,12 +5,17 @@ const Socket = require('./Socket');
 const Room = require('./Room');
 
 class Chat extends EventEmitter {
-    constructor(name, client) {
+    constructor(wiki, client) {
         super();
         this.client = client;
-
-        this.name = name;
-        this.url = `https://${name}.wikia.com`;
+        if (typeof wiki === 'string') {
+            this.name = wiki;
+            this.lang = '';
+        } else {
+            this.name = wiki.name;
+            this.lang = (!wiki.lang || wiki.lang === 'en') ? '' : wiki.lang;
+        }
+        this.url = `https://${this.name}.fandom.com${this.lang ? `/${this.lang}` : ''}`;
 
         this.mwMessages = new MediaWikiMessageCollection();
         this.wgVariables = new Collection();
@@ -94,7 +99,7 @@ class Chat extends EventEmitter {
             profile
         ] = await Promise.all([
             this.get(`wikia.php`, {
-                query: {
+                params: {
                     controller: 'ChatBanListSpecial',
                     method: 'axShowUsers',
                     username: this.client.session.name,
@@ -102,7 +107,7 @@ class Chat extends EventEmitter {
                 }
             }),
             this.get(`wikia.php`, {
-                query: {
+                params: {
                     controller: 'UserProfilePage',
                     method: 'renderUserIdentityBox',
                     title: 'User:' + this.client.session.name,
@@ -118,7 +123,7 @@ class Chat extends EventEmitter {
 
     async getChatInfo() {
         const data = await this.get('wikia.php', {
-            query: {
+            params: {
                 controller: 'Chat',
                 format: 'json'
             }
@@ -139,7 +144,7 @@ class Chat extends EventEmitter {
 
     async getWikiInfo() {
         const { query } = await this.get('api.php', {
-            query: {
+            params: {
                 action: 'query',
                 meta: 'siteinfo',
                 siprop: 'wikidesc',
@@ -152,19 +157,19 @@ class Chat extends EventEmitter {
 
     async getMessages() {
         const { query } = await this.get(`api.php`, {
-            query: {
+            params: {
                 action: 'query',
                 meta: 'allmessages',
                 ammessages: [
-                    'chat-user-joined',
-                    'chat-user-parted',
-                    'chat-welcome-message',
-                    'chat-user-was-kicked',
-                    'chat-you-were-kicked',
-                    'chat-user-was-banned',
-                    'chat-you-were-banned',
-                    'chat-user-was-unbanned',
-                    'chat-you-were-unbanned'
+                'chat-user-joined',
+                'chat-user-parted',
+                'chat-welcome-message',
+                'chat-user-was-kicked',
+                'chat-you-were-kicked',
+                'chat-user-was-banned',
+                'chat-you-were-banned',
+                'chat-user-was-unbanned',
+                'chat-you-were-unbanned'
                 ].join('|'),
                 format: 'json'
             }
@@ -175,7 +180,17 @@ class Chat extends EventEmitter {
     sanitizeJson(string) {
         return string
             .replace(/\\'/g, "'")                       // http://stackoverflow.com/questions/6096601  - names with ' r for tards
-            .replace(/\\x([0-9a-f]{2})/g, '\\u00$1');    // http://stackoverflow.com/questions/21085673
+            .replace(/\\x([0-9a-f]{2})/g, '\\u00$1')    // http://stackoverflow.com/questions/21085673
+            // https://stackoverflow.com/a/27725393
+            .replace(/\\n/g, "\\n")
+            .replace(/\\'/g, "\\'")
+            .replace(/\\"/g, '\\"')
+            .replace(/\\&/g, "\\&")
+            .replace(/\\r/g, "\\r")
+            .replace(/\\t/g, "\\t")
+            .replace(/\\b/g, "\\b")
+            .replace(/\\f/g, "\\f")
+            .replace(/[\u0000-\u0019]+/g,""); 
     }
 
     onJoin(user) {

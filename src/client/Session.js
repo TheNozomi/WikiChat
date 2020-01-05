@@ -15,16 +15,17 @@ class Session extends EventEmitter {
 
     async _login(username, password) {
         const loginResult = await this.http.form('https://services.fandom.com/auth/token', {
-            body: {
-                username,
-                password
+            data: {
+                username: username,
+                password: password
             }
         });
+        console.log(loginResult)
         this.accessToken = loginResult.access_token;
         this.refreshToken = loginResult.refresh_token;
         this.userId = loginResult.user_id;
         const tokenResult = await this.http.get('https://community.fandom.com/api.php', {
-            query: {
+            params: {
                 action: 'query',
                 titles: 'TODO:EasterEgg',
                 prop: 'info',
@@ -32,6 +33,7 @@ class Session extends EventEmitter {
                 format: 'json'
             }
         });
+        console.log(tokenResult.query.pages['-1']);
         this.token = tokenResult.query.pages['-1'].edittoken;
         this.name = username;
         return this;
