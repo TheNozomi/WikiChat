@@ -161,15 +161,15 @@ class Chat extends EventEmitter {
                 action: 'query',
                 meta: 'allmessages',
                 ammessages: [
-                'chat-user-joined',
-                'chat-user-parted',
-                'chat-welcome-message',
-                'chat-user-was-kicked',
-                'chat-you-were-kicked',
-                'chat-user-was-banned',
-                'chat-you-were-banned',
-                'chat-user-was-unbanned',
-                'chat-you-were-unbanned'
+                    'chat-user-joined',
+                    'chat-user-parted',
+                    'chat-welcome-message',
+                    'chat-user-was-kicked',
+                    'chat-you-were-kicked',
+                    'chat-user-was-banned',
+                    'chat-you-were-banned',
+                    'chat-user-was-unbanned',
+                    'chat-you-were-unbanned'
                 ].join('|'),
                 format: 'json'
             }

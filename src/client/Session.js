@@ -20,7 +20,7 @@ class Session extends EventEmitter {
                 password: password
             }
         });
-        console.log(loginResult)
+
         this.accessToken = loginResult.access_token;
         this.refreshToken = loginResult.refresh_token;
         this.userId = loginResult.user_id;
@@ -33,7 +33,7 @@ class Session extends EventEmitter {
                 format: 'json'
             }
         });
-        console.log(tokenResult.query.pages['-1']);
+
         this.token = tokenResult.query.pages['-1'].edittoken;
         this.name = username;
         return this;
