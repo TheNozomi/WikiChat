@@ -1,5 +1,5 @@
 const User = require('./User');
-const Status = require('./Status');
+const Status = require('./models/Status');
 
 class ChatUser extends User {
     constructor(attrs, chat) {
@@ -21,7 +21,6 @@ class ChatUser extends User {
     createPrivateRoom() {
         if (this.privateRoom) return this.privateRoom;
 
-        
     }
 
     privateMessage() {

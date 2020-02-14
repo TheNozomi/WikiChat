@@ -28,7 +28,7 @@ class ClientUser extends User {
                 rs: 'ChatAjax',
                 method: 'blockOrBanChat'
             },
-            data: {
+            form: {
                 userToBan: name,
                 token: this.client.session.token,
                 dir

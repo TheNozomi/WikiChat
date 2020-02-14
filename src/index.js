@@ -5,17 +5,20 @@ module.exports = {
     // Structures
     Session: require('./client/Session'),
     Chat: require('./structs/Chat'),
-    ChatEntry: require('./structs/ChatEntry'),
     ChatUser: require('./structs/ChatUser'),
     ClientUser: require('./structs/ClientUser'),
     Collection: require('./structs/Collection'),
-    InitQuery: require('./structs/InitQuery'),
-    InlineAlert: require('./structs/InlineAlert'),
     Message: require('./structs/Message'),
     Room: require('./structs/Room'),
     Socket: require('./structs/Socket'),
-    Status: require('./structs/Status'),
     User: require('./structs/User'),
+
+    // Models
+    ChatEntry: require('./structs/models/ChatEntry'),
+    InitQuery: require('./structs/models/InitQuery'),
+    InlineAlert: require('./structs/models/InlineAlert'),
+    LogoutCommand: require('./structs/models/LogoutCommand'),
+    Status: require('./structs/models/Status'),
 
     // Handy stuff for the sake of completion
     HTTPClient: require('./http/HTTPClient')

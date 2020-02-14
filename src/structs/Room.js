@@ -3,6 +3,10 @@ const EventEmitter = require('events').EventEmitter;
 const Collection = require('./Collection');
 const Socket = require('./Socket');
 const Message = require('./Message');
+const Models = {
+    LogoutCommand: require('./models/LogoutCommand'),
+    Status: require('./models/Status')
+};
 
 class Room extends EventEmitter {
     constructor(id, chat) {
@@ -23,11 +27,22 @@ class Room extends EventEmitter {
         await this.socket.connect();
     }
 
+    async leave() {
+        this.socket.send(new Models.LogoutCommand());
+        setTimeout(()=> this.socket.socket.disconnect(), 1000);
+    }
+
+    async setStatus(message, state) {
+        this.socket.send(new Models.Status(message, state));
+    }
+
     createSocket() {
         const socket = new Socket(this);
         socket.on('join', this.onJoin.bind(this));
         socket.on('leave', this.onLeave.bind(this));
         socket.on('message', this.onMessage.bind(this));
+        socket.on('kick', this.onKick.bind(this));
+        socket.on('ban', this.onBan.bind(this));
         socket.on('updateUser', this.onUpdateUser.bind(this));
         socket.on('openPrivateRoom', this.onOpenPrivateRoom.bind(this));
         return socket;
@@ -58,12 +73,35 @@ class Room extends EventEmitter {
 
     onMessage(message) {
         this.messages.set(message.id, message);
+        this.users.get(message.user.name).lastMessage = message;
         this.emit('message', message);
         if (this.isPrivate) {
             this.emit('message.private', message);
         }
         if (message.self) {
             this.emit('message.self', message);
+        }
+    }
+
+    onKick(event) {
+        this.emit('kick', event.room, this.users.get(event.kickedUserName), this.users.get(event.moderatorName));
+        setTimeout(() => this.users.delete(event.kickedUserName), 1500); // timeout before deleting because some socket events may arrive late
+    }
+
+    onBan(event) {
+        let banEvent = {
+            moderator: this.users.get(event.moderatorName),
+            reason: event.reason
+        }
+        if (parseInt(event.time) !== 0) { // ban
+            banEvent.bannedUser = this.users.get(event.kickedUserName);
+            banEvent.banLength = parseInt(event.time);
+            this.emit('ban', event.room, banEvent);
+            // timeout before deleting because some socket events may arrive late
+            setTimeout(() => this.users.delete(event.kickedUserName), 1500);
+        } else { // unban
+            banEvent.unbannedUserName = event.kickedUserName;
+            this.emit('unban', event.room, banEvent);
         }
     }
 
@@ -75,6 +113,7 @@ class Room extends EventEmitter {
         this.emit('room', room);
         this.emit('room.private', room);
     }
+
 }
 
 module.exports = Room;

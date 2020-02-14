@@ -1,6 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
 const Collection = require('./Collection');
-const Status = require('./Status');
+const Status = require('./models/Status');
 
 class User extends EventEmitter {
     constructor(name, client) {
@@ -8,6 +8,7 @@ class User extends EventEmitter {
         this.client = client;
         this.name = name;
         this.chats = new Collection();
+        this.lastMessage = null;
         this.userId = null;
         this.registrationDate = null;
     }

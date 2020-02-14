@@ -2,7 +2,7 @@ const { EventEmitter } = require('events');
 const io = require('socket.io-client');
 const ChatUser = require('./ChatUser');
 const Message = require('./Message');
-const InitQuery = require('./InitQuery');
+const InitQuery = require('./models/InitQuery');
 
 class Socket extends EventEmitter {
     constructor(room) {
@@ -128,6 +128,10 @@ class Socket extends EventEmitter {
         // Do nothing
     }
 
+    on_disableReconnect() {
+        // Do nothing
+    }
+
     on_initial({ collections }) {
         const { chats, users, privateUsers, blockedUsers, blockedByUsers } = collections;
 
@@ -209,11 +213,13 @@ class Socket extends EventEmitter {
     }
 
     on_kick({ attrs }) {
-        console.log('kick', attrs);
+        attrs.room = this.room;
+        this.emit('kick', attrs);
     }
 
     on_ban({ attrs }) {
-        console.log('ban', attrs);
+        attrs.room = this.room;
+        this.emit('ban', attrs);
     }
 
     on_updateUser({ attrs }, obj) {

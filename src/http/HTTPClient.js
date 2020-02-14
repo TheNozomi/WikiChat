@@ -33,20 +33,23 @@ class HTTPClient {
     }
 
     get(url, options = {}) {
-        return this.filter(!options.raw, axios.get, url, {
+        return this.filter(!options.raw, axios, url, {
+            method: 'GET',
             ...options
         });
     }
 
     post(url, options = {}) {
-        return this.filter(!options.raw, axios.post, url, {
+        return this.filter(!options.raw, axios, url, {
+            method: 'POST',
             ...options
         });
     }
 
     form(url, options = {}) {
-        return this.filter(!options.raw, axios.post, url,
-        qs.stringify(options.data), {
+        return this.filter(!options.raw, axios, url, {
+            method: 'POST',
+            data: qs.stringify(options.form),
             ...options
         });
     }

@@ -15,7 +15,7 @@ class Session extends EventEmitter {
 
     async _login(username, password) {
         const loginResult = await this.http.form('https://services.fandom.com/auth/token', {
-            data: {
+            form: {
                 username: username,
                 password: password
             }

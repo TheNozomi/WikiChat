@@ -1,4 +1,4 @@
-const ChatEntry = require('./ChatEntry');
+const ChatEntry = require('./models/ChatEntry');
 
 class Message extends ChatEntry {
     constructor(attrs, room, user) {

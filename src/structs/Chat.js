@@ -11,11 +11,13 @@ class Chat extends EventEmitter {
         if (typeof wiki === 'string') {
             this.name = wiki;
             this.lang = '';
+            this.interwiki = this.name;
         } else {
-            this.name = wiki.name;
             this.lang = (!wiki.lang || wiki.lang === 'en') ? '' : wiki.lang;
+            this.name = this.lang ? `${wiki.lang}.${wiki.name}` : wiki.name;
+            this.interwiki = wiki.name;
         }
-        this.url = `https://${this.name}.fandom.com${this.lang ? `/${this.lang}` : ''}`;
+        this.url = `https://${this.interwiki}.fandom.com${this.lang ? `/${this.lang}` : ''}`;
 
         this.mwMessages = new MediaWikiMessageCollection();
         this.wgVariables = new Collection();
@@ -47,6 +49,9 @@ class Chat extends EventEmitter {
         this.relay(room, 'join');
         this.relay(room, 'leave');
         this.relay(room, 'message');
+        this.relay(room, 'kick');
+        this.relay(room, 'ban');
+        this.relay(room, 'unban');
         this.relay(room, 'updateUser');
         if (room.isPrivate) {
             const others = users.filter(name => name != this.client.user.name);
@@ -82,6 +87,8 @@ class Chat extends EventEmitter {
             this.getMessages(),
         ]);
         if (this.allowed) {
+            await this.room.connect();
+        } else {
             // TODO: Branch into different error classes
             if (this.banned) {
                 throw new Error('Cannot connect to chat: Banned from chat');
@@ -90,7 +97,6 @@ class Chat extends EventEmitter {
                 throw new Error('Cannot connect to chat: Blocked from the wiki');
             }
         }
-        await this.room.connect();
     }
 
     async getSelfInfo() {
@@ -179,7 +185,7 @@ class Chat extends EventEmitter {
 
     sanitizeJson(string) {
         return string
-            .replace(/\\'/g, "'")                       // http://stackoverflow.com/questions/6096601  - names with ' r for tards
+            .replace(/\\'/g, "'")                       // http://stackoverflow.com/questions/6096601 - names with ' r for tards
             .replace(/\\x([0-9a-f]{2})/g, '\\u00$1')    // http://stackoverflow.com/questions/21085673
             // https://stackoverflow.com/a/27725393
             .replace(/\\n/g, "\\n")
@@ -193,24 +199,6 @@ class Chat extends EventEmitter {
             .replace(/[\u0000-\u0019]+/g,""); 
     }
 
-    onJoin(user) {
-        this.users.set(user.name, user);
-        this.emit('join', user);
-    }
-
-    onLeave(user) {
-        this.users.delete(user.name);
-        this.emit('leave', user);
-    }
-
-    onMessage(message) {
-        this.messages.set(message.id, message);
-        this.emit('message', message);
-    }
-
-    onUpdateUser(user) {
-        this.emit('updateUser', user);
-    }
 }
 
 module.exports = Chat;

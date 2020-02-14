@@ -60,6 +60,9 @@ class Client extends EventEmitter {
         this.relay(chat, 'leave');
         this.relay(chat, 'message');
         this.relay(chat, 'message.private');
+        this.relay(chat, 'kick');
+        this.relay(chat, 'ban');
+        this.relay(chat, 'unban');
         this.relay(chat, 'updateUser');
         this.relay(chat, 'room');
         this.relay(chat, 'room.main');
