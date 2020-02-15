@@ -136,7 +136,7 @@ class Socket extends EventEmitter {
         const { chats, users, privateUsers, blockedUsers, blockedByUsers } = collections;
 
         users.models.forEach(model => {
-            const user = new ChatUser(model.attrs, this.room.chat);
+            const user = new ChatUser(model.attrs, this.room);
             this.room.users.set(user.name, user);
         });
 
@@ -172,7 +172,7 @@ class Socket extends EventEmitter {
             this.on_updateUser({ attrs }, existing);
             return;
         }
-        const user = new ChatUser(attrs, this.room.chat);
+        const user = new ChatUser(attrs, this.room);
         this.emit('join', user);
     }
 

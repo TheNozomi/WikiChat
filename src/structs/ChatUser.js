@@ -2,9 +2,10 @@ const User = require('./User');
 const Status = require('./models/Status');
 
 class ChatUser extends User {
-    constructor(attrs, chat) {
-        super(attrs.name, chat._client);
-        this.chat = chat;
+    constructor(attrs, room) {
+        super(attrs.name, room.chat._client);
+        this.room = room;
+        this.chat = room.chat;
         this.since = attrs.since
             ? new Date(attrs.since['0'] * 1000)
             : null;
