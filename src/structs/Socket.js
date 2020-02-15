@@ -213,18 +213,18 @@ class Socket extends EventEmitter {
     }
 
     on_kick({ attrs }) {
-        if (this.partTimeouts[attrs.name]) {
-            clearTimeout(this.partTimeouts[attrs.name]);
-            delete this.partTimeouts[attrs.name];
+        if (this.partTimeouts[attrs.kickedUserName]) {
+            clearTimeout(this.partTimeouts[attrs.kickedUserName]);
+            delete this.partTimeouts[attrs.kickedUserName];
         }
         attrs.room = this.room;
         this.emit('kick', attrs);
     }
 
     on_ban({ attrs }) {
-        if (this.partTimeouts[attrs.name]) {
-            clearTimeout(this.partTimeouts[attrs.name]);
-            delete this.partTimeouts[attrs.name];
+        if (this.partTimeouts[attrs.kickedUserName]) {
+            clearTimeout(this.partTimeouts[attrs.kickedUserName]);
+            delete this.partTimeouts[attrs.kickedUserName];
         }
         attrs.room = this.room;
         this.emit('ban', attrs);
