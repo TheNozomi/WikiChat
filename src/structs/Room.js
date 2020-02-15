@@ -85,6 +85,7 @@ class Room extends EventEmitter {
 
     onKick(event) {
         this.emit('kick', event.room, this.users.get(event.kickedUserName), this.users.get(event.moderatorName));
+        setTimeout(() => this.users.delete(event.kickedUserName), 1500); // timeout before deleting because some socket events may arrive late
     }
 
     onBan(event) {
@@ -96,6 +97,7 @@ class Room extends EventEmitter {
             banEvent.bannedUser = this.users.get(event.kickedUserName);
             banEvent.banLength = parseInt(event.time);
             this.emit('ban', event.room, banEvent);
+            setTimeout(() => this.users.delete(event.kickedUserName), 1500); // timeout before deleting because some socket events may arrive late
         } else { // unban
             banEvent.unbannedUserName = event.kickedUserName;
             this.emit('unban', event.room, banEvent);
