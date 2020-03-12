@@ -55,7 +55,7 @@ class Client extends EventEmitter {
     
     add(wiki) {
         const chat = new Chat(wiki, this);
-        this.chats.set(wiki, chat);
+        this.chats.set(chat.name, chat);
         this.relay(chat, 'join');
         this.relay(chat, 'leave');
         this.relay(chat, 'message');

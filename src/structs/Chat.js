@@ -14,7 +14,7 @@ class Chat extends EventEmitter {
             this.interwiki = this.name;
         } else {
             this.lang = (!wiki.lang || wiki.lang === 'en') ? '' : wiki.lang;
-            this.name = this.lang ? `${wiki.lang}_${wiki.name}` : wiki.name;
+            this.name = this.lang ? `${wiki.lang}.${wiki.name}` : wiki.name;
             this.interwiki = wiki.name;
         }
         this.url = `https://${this.interwiki}.fandom.com${this.lang ? `/${this.lang}` : ''}`;
