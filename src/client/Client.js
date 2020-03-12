@@ -72,6 +72,10 @@ class Client extends EventEmitter {
     relay(emitter, type) {
         emitter.on(type, this.emit.bind(this, type));
     }
+
+    use(module, options = {}) {
+        module.setup(this, options);
+    }
 }
 
 
