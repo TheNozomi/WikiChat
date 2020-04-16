@@ -53,7 +53,7 @@ class Room extends EventEmitter {
         this.socket.send(
             new Message({
                 text,
-                name: this.clientUsername
+                name: this.clientUsername,
                 roomId: this.roomId
             },
             this,
