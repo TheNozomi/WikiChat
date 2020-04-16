@@ -11,7 +11,7 @@ const Models = {
 class Room extends EventEmitter {
     constructor(id, chat) {
         super();
-        this.chat = chat;
+        this.clientUsername = chat.client.user.name;
 
         this.roomId = id || chat.roomId;
         this.isPrivate = id !== null && id !== chat.roomId;
@@ -53,11 +53,11 @@ class Room extends EventEmitter {
         this.socket.send(
             new Message({
                 text,
-                name: this.chat.client.user.name,
+                name: this.clientUsername
                 roomId: this.roomId
             },
             this,
-            this.users.get(this.chat.client.user.name))
+            this.users.get(this.clientUsername))
         );
     }
 
